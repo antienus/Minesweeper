@@ -1,0 +1,210 @@
+
+//MINESWEEPER
+import java.util.Scanner;
+class Main {
+  public static void main(String[] args) {
+    boolean gameOver = false;
+    boolean failedInstructions = false;
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Enter grid height, 3-10:");
+   int chosenY = scan.nextInt();
+   if (chosenY <3 || chosenY >10){
+     gameOver = true;
+     failedInstructions = true;
+   }
+   System.out.println("Enter grid width, 3-10:");
+   int chosenX = scan.nextInt();
+   if (chosenX <3 || chosenX >10){
+     gameOver = true;
+     failedInstructions = true;
+   }
+   int pizza = 0;
+   int numBombs = (((chosenY * chosenX) / 5));
+   String formGrid[][] = new String[chosenY+2][chosenX+2];
+ //  for (int i = 0; i < numBombs; i++){
+ //    int bombOfY = (int)Math.random()*chosenY;
+ //    int bombOfX = (int)Math.random()*chosenX;
+ //    if (formGrid[bombOfY][bombOfX] == "B"){
+  //      i--;
+  //    }
+  //   formGrid[bombOfY][bombOfX] = "B";
+  // }
+  for(int row = 0; row < formGrid.length; row++)
+{
+    for(int col = 0; col < formGrid[0].length; col++)
+    {
+        formGrid[row][col] = "9"; //creates a bombless edge to elimanate null calls
+    }
+}
+   for (int i = 0; i < numBombs; i++){
+     int bombOfY = (int)(Math.random()*chosenY)+1;
+     int bombOfX = (int)(Math.random()*chosenX)+1;
+     if (formGrid[bombOfY][bombOfX] == "B"){
+        i--;
+      }
+     formGrid[bombOfY][bombOfX] = "B";
+   }
+
+   for (int row = 1; row < formGrid.length-1; row++)
+      {
+         for (int col = 1; col < formGrid[0].length-1; col++)
+         {
+           int bombTouch= 0;
+           if(formGrid[row][col].equals("B")){
+            pizza++;
+           } else {
+             if(formGrid[row-1][col-1].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row-1][col].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row-1][col+1].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row][col-1].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row][col+1].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row+1][col-1].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row+1][col].equals("B")){
+               bombTouch++;
+             }
+             if(formGrid[row+1][col+1].equals("B")){
+               bombTouch++;
+             }
+            String gridVal = Integer.toString(bombTouch);
+            
+            formGrid[row][col] = gridVal;
+
+
+           }
+         }
+      }
+
+
+/*for(int row = 0; row < formGrid.length; row++)
+{
+    for(int col = 0; col < formGrid[0].length; col++)
+    {
+        System.out.print(formGrid[row][col]);
+    }
+    System.out.println();
+}*/ //to check formGrid
+
+ String realGrid[][] = new String[chosenY][chosenX];
+
+//shrinks grid down to the actual board for minesweeper
+
+for(int row = 1; row < formGrid.length-1; row++)
+{
+    for(int col = 1; col < formGrid[0].length-1; col++)
+    {
+        realGrid[row-1][col-1]= formGrid[row][col];
+    }
+}
+/*for(int row = 0; row < realGrid.length; row++)
+{
+    for(int col = 0; col < realGrid[0].length; col++)
+    {
+        System.out.print(realGrid[row][col]);
+    }
+    System.out.println();
+}*/ //to check realGrid
+
+String displayGrid[][] = new String[chosenY][chosenX];
+
+for(int row = 0; row < realGrid.length; row++)
+{
+    for(int col = 0; col < realGrid[0].length; col++)
+    {
+        displayGrid[row][col] = "X";// display starts with no information about actual grid exept boundaries
+    }
+}
+for(int row = 0; row < displayGrid.length; row++)
+{
+    for(int col = 0; col < displayGrid[0].length; col++)
+    {
+        System.out.print(displayGrid[row][col]);
+    }
+    System.out.println();
+}
+
+boolean winner = false;
+
+int foundSpots = 0;// how many spots have been found out of the board
+ while (gameOver == false){  
+  foundSpots = 0;
+  Scanner input = new Scanner(System.in);//will ask for input spot
+  System.out.println("Enter a row, 1-" + chosenY);
+  int uSelectRow = input.nextInt()-1;
+  System.out.println("Enter a column, 1-" + chosenX);
+  int uSelectCol = input.nextInt()-1;
+  if (!realGrid[uSelectRow][uSelectCol].equals("B")){
+    displayGrid[uSelectRow][uSelectCol] = realGrid[uSelectRow][uSelectCol];//if selected sopt is not a bomb it updates the display to reflect the real grid
+
+    for(int row = 0; row < displayGrid.length; row++)
+{
+    for(int col = 0; col < displayGrid[0].length; col++)
+    {
+        System.out.print(displayGrid[row][col]);
+    }
+    System.out.println();
+}
+
+  }else{
+    gameOver = true;//if bomb is selected game ends and is lost
+  }
+
+for(int row = 0; row < displayGrid.length; row++)
+{
+    for(int col = 0; col < displayGrid[0].length; col++)
+    {
+      if (displayGrid[row][col].equals(realGrid[row][col])){
+        foundSpots++;
+        //System.out.println(foundSpots); //checks progression of found spots
+        if (foundSpots == ((chosenY * chosenX)-numBombs)){
+          winner = true;//if all non bomb spots are found then game is over and is won
+          gameOver = true;
+        }
+      }}}
+
+//GAME IS OVER 
+//LOSE OR WIN 
+//SHOW REAL BOARD
+ }
+if (winner == true){
+  System.out.println("YOU WON!");
+  for(int row = 0; row < realGrid.length; row++)
+{
+    for(int col = 0; col < realGrid[0].length; col++)
+    {
+        System.out.print(realGrid[row][col]);
+    }
+    System.out.println();
+}} else{
+  if(failedInstructions == true){
+    System.out.println("GRID DIMENSIONS 3-10");
+  }
+  System.out.println("YOU LOST!");
+  for(int row = 0; row < realGrid.length; row++)
+{
+    for(int col = 0; col < realGrid[0].length; col++)
+    {
+        System.out.print(realGrid[row][col]);
+    }
+    System.out.println();
+}}
+
+
+//if xy is good set display to real
+//if bomb stop
+
+
+
+  }
+}
